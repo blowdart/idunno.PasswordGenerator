@@ -1,0 +1,33 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <CIBuild Condition="'$(CIBuild)' == ''">false</CIBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageProjectUrl>https://github.com/blowdart/idunno.PasswordGenerator</PackageProjectUrl>
+    <!-- The SPDX name for the source license. See https://spdx.org/licenses/. -->
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)icon.png</PackageIconFullPath>
+    <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.255" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(PackageIconFullPath)" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+</Project>
