@@ -16,9 +16,15 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   disable.coverage.autogenerate: 'true'
+  isDevBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/dev')]
+  isReleaseBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/rel')]
+  isPullRequest: $[eq(variables['Build.Reason'], 'PullRequest')]
 
 stages:
 - stage: Build
+  displayName: Build, test and package
+  variables:
+    - group: 'Report Generator License Key'
   jobs:
   - job: Build
     pool:
@@ -31,7 +37,6 @@ stages:
       inputs:
         version: '6.0.x'
         packageType: 'sdk'
-
 
     # Install nerdbank versioning tool
     # https://github.com/dotnet/Nerdbank.GitVersioning/blob/master/doc/nbgv-cli.md
@@ -69,6 +74,7 @@ stages:
         reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
         targetdir: $(build.artifactstagingdirectory)/coverageReports/
         reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
+        license: '$(ReportGeneratorLicenseKey)'
 
     # Produce unsigned packages
     - task: DotNetCoreCLI@2
@@ -94,6 +100,17 @@ stages:
         codeCoverageTool: cobertura
         summaryFileLocation: $(build.artifactstagingdirectory)/coverageReports/cobertura.xml
         reportDirectory: '$(build.artifactstagingdirectory)/coverageReports/'
+
+    - task: NuGetAuthenticate@0
+      displayName: 'NuGet Authenticate'
+
+    - task: NuGetCommand@2
+      displayName: 'Push unsigned packages to Artifacts feed'
+      inputs:
+        command: push
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/Packages/*.nupkg'
+        publishVstsFeed: 'idunno.Password/idunno.Password.Generator.Builds'
+        allowPackageConflicts: false
 
 - stage: CodeSign
   dependsOn: Build
