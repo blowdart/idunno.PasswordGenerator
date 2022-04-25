@@ -29,4 +29,4 @@ A nuget package is available at https://www.nuget.org/packages/idunno.Password.G
 
 ## License
 
-This code is licensed under the MIT license.
+This code is licensed under the Apache license.
