@@ -4,13 +4,13 @@ updates:
   directory: "/"
   schedule:
     interval: daily
-    reviewers:
-      - "blowdart"    
+  reviewers:
+    - "blowdart"    
 
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
     interval: "daily"
-    reviewers:
-      - "blowdart"
-   
+  reviewers:
+    - "blowdart"
+ 
