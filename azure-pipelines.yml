@@ -6,7 +6,7 @@ trigger:
 
 pr:
 - main
-- dependabot/
+- dependabot/*
 - rel/*
 
 variables:
