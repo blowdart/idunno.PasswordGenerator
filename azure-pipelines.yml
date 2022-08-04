@@ -102,7 +102,7 @@ stages:
         reportDirectory: '$(build.artifactstagingdirectory)/coverageReports/'
 
 - stage : PublishUnsigned
-  displayName: Push unsigned artificats to artifact feed
+  displayName: Push unsigned artifacts to artifact feed
   dependsOn: Build
   condition: |
     and(
@@ -112,6 +112,7 @@ stages:
     )
   jobs:
   - job: PublishUnsigned
+    displayName: Publish unsigned packages to Azure Artifacts
     pool:
       vmImage: 'windows-latest'
     steps:
