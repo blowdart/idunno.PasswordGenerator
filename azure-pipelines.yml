@@ -16,7 +16,7 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   disable.coverage.autogenerate: 'true'
-  isDevBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/dev')]
+  isDevBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   isReleaseBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/rel')]
   isPullRequest: $[eq(variables['Build.Reason'], 'PullRequest')]
 
@@ -89,7 +89,7 @@ stages:
         nobuild: true
 
     # Publish unsigned packages
-    - publish: $(Build.ArtifactStagingDirectory)\Packages
+    - publish: $(Build.ArtifactStagingDirectory)/Packages
       displayName: Publish artifacts
       artifact: BuildPackages
 
@@ -101,16 +101,35 @@ stages:
         summaryFileLocation: $(build.artifactstagingdirectory)/coverageReports/cobertura.xml
         reportDirectory: '$(build.artifactstagingdirectory)/coverageReports/'
 
-    - task: NuGetAuthenticate@0
-      displayName: 'NuGet Authenticate'
+- stage : PublishUnsigned
+  displayName: Push unsigned artificats to artifact feed
+  dependsOn: Build
+  condition: |
+    and(
+      succeeded('Build'),
+      startsWith(variables['Build.sourceBranch'], 'refs/heads/main'),
+      not(eq(variables['build.reason'], 'PullRequest'))
+    )
+  jobs:
+  - job: PublishUnsigned
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+      - checkout: none
+      - download: current
+        displayName: 'Get unsignedPackages from build stage'
+        artifact: BuildPackages
 
-    - task: NuGetCommand@2
-      displayName: 'Push unsigned packages to Artifacts feed'
-      inputs:
-        command: push
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/Packages/*.nupkg'
-        publishVstsFeed: 'idunno.Password/idunno.Password.Generator.Builds'
-        allowPackageConflicts: false
+      - task: NuGetAuthenticate@0
+        displayName: 'NuGet Authenticate'
+
+      - task: NuGetCommand@2
+        displayName: 'Push unsigned packages to Artifacts feed'
+        inputs:
+          command: push
+          packagesToPush: '$(Pipeline.Workspace)\BuildPackages\*.nupkg'
+          publishVstsFeed: 'idunno.Password/idunno.Password.Generator.Builds'
+          allowPackageConflicts: false
 
 - stage: CodeSign
   dependsOn: Build
@@ -132,6 +151,11 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: none
+          - download: current
+            displayName: 'Get unsigned nuget packages from build stage'
+            artifact: BuildPackages
+
           # Install nuget tool
           - task: NuGetToolInstaller@1
 
