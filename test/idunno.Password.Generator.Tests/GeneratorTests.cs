@@ -97,7 +97,7 @@ namespace idunno.Password.Generator.Tests
         {
             var generator = new PasswordGenerator();
 
-            void action() => generator.Generate(10, 10, 10, true, false, "a", "A", "1", "!");
+            void action() => generator.Generate(10, 0, 0, true, false, "abcd", "ABCD", "1", "!");
 
             var exception = Assert.Throws<ArgumentException>(action);
             Assert.Equal("length", exception.ParamName);
