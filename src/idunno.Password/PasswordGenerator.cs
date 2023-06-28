@@ -150,7 +150,7 @@ namespace idunno.Password
         private static string InsertAtRandomPosition(string input, char characterToInsert)
         {
             int position = input.Length == 0 ? 0 : RandomNumberGenerator.GetInt32(0, input.Length);
-            return (input.Insert(position, characterToInsert.ToString()));
+            return input.Insert(position, characterToInsert.ToString());
         }
 
         /// <summary>
