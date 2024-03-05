@@ -35,9 +35,9 @@ stages:
     steps:
     # .NET 6
     - task: UseDotNet@2
-      displayName: 'Install .NET Core 6.0.x SDK'
+      displayName: 'Install .NET Core 6.x SDK'
       inputs:
-        version: '6.0.x'
+        version: '6.x'
         packageType: 'sdk'
 
     # Install nerdbank versioning tool
@@ -123,7 +123,7 @@ stages:
         displayName: 'Get unsignedPackages from build stage'
         artifact: BuildPackages
 
-      - task: NuGetAuthenticate@0
+      - task: NuGetAuthenticate@1
         displayName: 'NuGet Authenticate'
 
       - task: NuGetCommand@2
