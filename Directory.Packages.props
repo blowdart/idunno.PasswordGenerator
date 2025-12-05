@@ -1,0 +1,18 @@
+﻿<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.100" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.CodeCoverage" Version="18.0.1" />
+
+    <PackageVersion Include="xunit.v3" Version="3.2.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.6.133" />
+  </ItemGroup>
+</Project>

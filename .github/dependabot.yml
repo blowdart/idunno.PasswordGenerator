@@ -1,16 +1,16 @@
-version: 2
+﻿version: 2
 updates:
 - package-ecosystem: nuget
   directory: "/"
   schedule:
     interval: daily
-  reviewers:
-    - "blowdart"    
+  cooldown:
+    default-days: 7
 
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
     interval: "daily"
-  reviewers:
-    - "blowdart"
+  cooldown:
+    default-days: 7
  

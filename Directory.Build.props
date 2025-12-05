@@ -1,19 +1,24 @@
-<Project>
-  <PropertyGroup>
-    <Product>idunno.org Password Generator</Product>
-    <MaintainerEmail>github.com@idunno.org</MaintainerEmail>
+﻿<Project>
+	<PropertyGroup>
+		<Product>idunno.org Password Generator</Product>
+		<MaintainerEmail>github.com@idunno.org</MaintainerEmail>
 
-    <RepositoryUrl>https://github.com/blowdart/idunno.PasswordGenerator</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+		<RepositoryUrl>https://github.com/blowdart/idunno.PasswordGenerator</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
 
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
+		<SignAssembly>true</SignAssembly>
+		<PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <Company>idunno.org</Company>
-    <Authors>blowdart</Authors>
-    <Copyright>Copyright (c) 2022 Barry Dorrans</Copyright>
-  </PropertyGroup>
+		<Company>idunno.org</Company>
+		<Authors>blowdart</Authors>
+		<Copyright>Copyright (c) 2022 Barry Dorrans</Copyright>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	</PropertyGroup>
 </Project>
