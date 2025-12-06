@@ -120,7 +120,7 @@ jobs:
       run: >
         ./sign/sign code trusted-signing *.nupkg 
         --base-directory ${env:OUTPUT_DIRECTORY} 
-        -tse "${{ secrets.AZURE_TRUSTEDSIGNING_ENDPOINT }}" 
+        -tse "${{ secrets.AZURE_TRUSTEDSIGNING_ACCOUNTURI }}" 
         -tsa "${{ secrets.AZURE_TRUSTEDSIGNING_ACCOUNT }}" 
         -tscp "${{ secrets.AZURE_TRUSTEDSIGNING_CERTIFICATEPROFILE }}"
 
