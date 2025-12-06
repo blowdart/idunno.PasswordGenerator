@@ -159,8 +159,8 @@ jobs:
     - name: 'Gather nupkgs from signing artifacts'
       uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
       with:
-        name: signed-artifacts.zip
-        path : ${{ env.NUPKG_DIRECTORY }}
+        name: signed-artifacts
+        path : ${{ env.OUTPUT_DIRECTORY }}
 
     - name: Authenticate to nuget
       uses: NuGet/login@d22cc5f58ff5b88bf9bd452535b4335137e24544 # v1.0.0
@@ -173,6 +173,6 @@ jobs:
     - name: Publish NuGet packages
       shell: pwsh
       run: >
-        foreach($file in (Get-ChildItem "${env:NUPKG_DIRECTORY}" -Recurse -Filter *.nupkg)) {
+        foreach($file in (Get-ChildItem "${env:OUTPUT_DIRECTORY}" -Recurse -Filter *.nupkg)) {
           dotnet nuget push $file --api-key "${{ steps.nugetlogin.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
         }

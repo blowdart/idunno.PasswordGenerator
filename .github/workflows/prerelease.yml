@@ -161,7 +161,7 @@ jobs:
       uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
       with:
         name: signed-artifacts
-        path : ${{ env.NUPKG_DIRECTORY }}
+        path : ${{ env.OUTPUT_DIRECTORY }}
 
     - name: Setup MyGet and GitHub Packages as NuGet Sources
       shell: pwsh
@@ -174,13 +174,13 @@ jobs:
     - name: Publish NuGet packages to GitHub packages
       shell: pwsh
       run: >
-        foreach($file in (Get-ChildItem "${env:NUPKG_DIRECTORY}" -Recurse -Filter *.nupkg)) {
+        foreach($file in (Get-ChildItem "${env:OUTPUT_DIRECTORY}" -Recurse -Filter *.nupkg)) {
           dotnet nuget push $file --api-key "${{ secrets.PUBLISH_PACKAGES_PAT }}" --source "github" --skip-duplicate
         }
 
     - name: Publish NuGet packages to myget
       shell: pwsh
       run: >
-        foreach($file in (Get-ChildItem "${env:NUPKG_DIRECTORY}" -Recurse -Filter *.nupkg)) {
+        foreach($file in (Get-ChildItem "${env:OUTPUT_DIRECTORY}" -Recurse -Filter *.nupkg)) {
           dotnet nuget push $file --api-key "${{ secrets.MYGET_APIKEY }}" --source "https://www.myget.org/F/blowdart/api/v2/package" --skip-duplicate
         }
