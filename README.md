@@ -1,6 +1,7 @@
 ﻿# C# Password Generator
 
 [![CI Build](https://github.com/blowdart/idunno.PasswordGenerator/actions/workflows/ci-build.yml/badge.svg)](https://github.com/blowdart/idunno.PasswordGenerator/actions/workflows/ci-build.yml)
+[![CodeQL](https://github.com/blowdart/idunno.PasswordGenerator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/blowdart/idunno.PasswordGenerator/actions/workflows/codeql-analysis.yml)
 [![NuGet Version](https://img.shields.io/nuget/v/idunno.Password.Generator.svg)](https://www.nuget.org/packages/idunno.Password.Generator/)
 [![License](https://img.shields.io/github/license/blowdart/idunno.PasswordGenerator.svg)](https://github.com/blowdart/idunno.PasswordGenerator/blob/main/LICENSE)
 
