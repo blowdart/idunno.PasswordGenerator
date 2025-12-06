@@ -1,6 +1,8 @@
-# C# Password Generator
+﻿# C# Password Generator
 
-[![Build Status](https://dev.azure.com/idunno-org/idunno.Password/_apis/build/status/blowdart.idunno.PasswordGenerator?branchName=main)](https://dev.azure.com/idunno-org/idunno.Password/_build/latest?definitionId=2&branchName=main)
+[![CI Build](https://github.com/blowdart/idunno.PasswordGenerator/actions/workflows/ci-build.yml/badge.svg)](https://github.com/blowdart/idunno.PasswordGenerator/actions/workflows/ci-build.yml)
+[![NuGet Version](https://img.shields.io/nuget/v/idunno.Password.Generator.svg)](https://www.nuget.org/packages/idunno.Password.Generator/)
+[![License](https://img.shields.io/github/license/blowdart/idunno.PasswordGenerator.svg)](https://github.com/blowdart/idunno.PasswordGenerator/blob/main/LICENSE)
 
 This library is a password generator which implements generation of random passwords 
 with provided requirements as described by  [AgileBits 1Password](https://discussions.agilebits.com/discussion/23842/how-random-are-the-generated-passwords)
