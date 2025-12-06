@@ -59,11 +59,6 @@ jobs:
     - name: 'Pack release'
       run: dotnet pack --configuration Release --no-restore  --no-build --output ${OUTPUT_DIRECTORY} --property:PublicRelease=false
 
-    - name: 'List artifact directory'
-      shell: pwsh
-      run: >
-        Get-ChildItem -Path ${env:OUTPUT_DIRECTORY} -Recurse -Force
-
     - name: 'Extract SBOMs'
       shell: pwsh
       run: > 
@@ -72,11 +67,6 @@ jobs:
           Copy-Item "$($_.DirectoryName)/$($_.Basename)/_manifest/spdx_2.2/manifest.spdx.json" -Destination "${env:OUTPUT_DIRECTORY}/$($_.Basename).spdx.json"
           Copy-Item "$($_.DirectoryName)/$($_.Basename)/_manifest/spdx_2.2/manifest.spdx.json.sha256" -Destination "${env:OUTPUT_DIRECTORY}/$($_.Basename).spdx.json.sha256"
           Remove-Item "$($_.DirectoryName)/$($_.Basename)" -Force -Recurse }
-
-    - name: 'List artifact directory'
-      shell: pwsh
-      run: >
-        Get-ChildItem -Path ${env:OUTPUT_DIRECTORY} -Recurse -Force
 
     - name: Upload unsigned nupkgs to artifacts
       id: upload
@@ -117,11 +107,6 @@ jobs:
         name: build-artifacts
         path : ${{ env.OUTPUT_DIRECTORY }}
 
-    - name: List assets to be signed
-      shell: pwsh
-      run: >
-        Get-ChildItem -Path ${env:OUTPUT_DIRECTORY} -Include *.nupkg -Recurse -Force
-
     - name: Authenticate to Azure
       uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # 2.3.0
       with:
@@ -133,7 +118,11 @@ jobs:
     - name: Sign
       shell: pwsh
       run: >
-        ./sign/sign code trusted-signing *.nupkg --base-directory ${env:OUTPUT_DIRECTORY} -tse "${{ secrets.AZURE_TRUSTEDSIGNING_ENDPOINT }}" -tsa "${{ secrets.AZURE_TRUSTEDSIGNING_ACCOUNT }}" -tscp "${{ secrets.AZURE_TRUSTEDSIGNING_CERTIFICATEPROFILE }}"
+        ./sign/sign code trusted-signing *.nupkg 
+        --base-directory ${env:OUTPUT_DIRECTORY} 
+        -tse "${{ secrets.AZURE_TRUSTEDSIGNING_ENDPOINT }}" 
+        -tsa "${{ secrets.AZURE_TRUSTEDSIGNING_ACCOUNT }}" 
+        -tscp "${{ secrets.AZURE_TRUSTEDSIGNING_CERTIFICATEPROFILE }}"
 
     - name: Upload signed nupkgs to artifacts
       uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
@@ -165,14 +154,6 @@ jobs:
       with:
         egress-policy: audit
 
-    - name: 'Checkout latest sleet.json'
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      with:
-        sparse-checkout: |
-          sleet.json
-        sparse-checkout-cone-mode: false
-        persist-credentials: false
-
     - name: 'Setup .NET SDK'
       uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
 
@@ -181,19 +162,6 @@ jobs:
       with:
         name: signed-artifacts.zip
         path : ${{ env.NUPKG_DIRECTORY }}
-
-    - name: List assets to be published
-      shell: pwsh
-      run: >
-        Get-ChildItem -Path ${env:NUPKG_DIRECTORY} -Filter *.nupkg -Recurse -Force
-
-    - name: Authenticate to Azure
-      uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5 # 2.3.0
-      with:
-        allow-no-subscriptions : true
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Setup MyGet and GitHub Packages as NuGet Sources
       shell: pwsh
