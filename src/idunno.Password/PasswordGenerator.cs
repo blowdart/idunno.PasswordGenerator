@@ -4,7 +4,9 @@
 using System;
 using System.Security.Cryptography;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace idunno.Password
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     public class PasswordGenerator
     {
@@ -26,42 +28,43 @@ namespace idunno.Password
         /// <param name="noUpperCase">Flag indicating whether no upper case symbols should be included in the generated password.</param>
         /// <param name="allowRepeatedCharacters">Flag indicating whether repeated characters should be allowed in the generated password.</param>
         /// <returns>A random password string with the requirements specified by the parameters</returns>
-        /// <exception cref="ArgumentException">Thrown when the password requirements cannot be met.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the restrictive arguments mean generation cannot be fulfilled.</exception>
         public string Generate(int length, int numberOfDigits, int numberOfSymbols, bool noUpperCase = false, bool allowRepeatedCharacters = false)
         {
-            var letters = LowerCaseLetters;
+            string letters = LowerCaseLetters;
+
             if (!noUpperCase)
             {
                 letters += UpperCaseLetters;
             }
 
-            var charactersInPassword = length - numberOfDigits - numberOfSymbols;
+            int charactersInPassword = length - numberOfDigits - numberOfSymbols;
 
             if (charactersInPassword < 0)
             {
-                throw new ArgumentException("Number of digits and symbols must be less than length.", nameof(length));
+                throw new ArgumentOutOfRangeException(nameof(length), "Number of digits and symbols must be less than length.");
             }
 
             if (!allowRepeatedCharacters && charactersInPassword > letters.Length)
             {
-                throw new ArgumentException("Number of characters requested exceeds available letters and repeats are not allowed", nameof(length));
+                throw new ArgumentOutOfRangeException(nameof(length), "Number of characters requested exceeds available letters and repeats are not allowed");
             }
 
             if (!allowRepeatedCharacters && numberOfDigits > 0 && numberOfDigits > Digits.Length)
             {
-                throw new ArgumentException("Number of digits requested exceeds available digits and repeats are not allowed", nameof(numberOfDigits));
+                throw new ArgumentOutOfRangeException(nameof(numberOfDigits), "Number of digits requested exceeds available digits and repeats are not allowed");
             }
 
             if (!allowRepeatedCharacters && numberOfSymbols > 0 && numberOfSymbols > Symbols.Length)
             {
-                throw new ArgumentException("Number of symbols requested exceeds available symbols and repeats are not allowed", nameof(numberOfSymbols));
+                throw new ArgumentOutOfRangeException(nameof(numberOfSymbols), "Number of symbols requested exceeds available symbols and repeats are not allowed");
             }
 
             string result = string.Empty;
 
             for (int i = 0; i < charactersInPassword; i++)
             {
-                var character = GetRandomElement(letters);
+                char character = GetRandomElement(letters);
 
                 if (!allowRepeatedCharacters && result.Contains(character, StringComparison.InvariantCulture))
                 {
@@ -75,7 +78,7 @@ namespace idunno.Password
 
             for (int i = 0; i < numberOfDigits; i++)
             {
-                var digit = GetRandomElement(Digits);
+                char digit = GetRandomElement(Digits);
 
                 if (!allowRepeatedCharacters && result.Contains(digit, StringComparison.InvariantCulture))
                 {
@@ -89,7 +92,7 @@ namespace idunno.Password
 
             for (int i = 0; i < numberOfSymbols; i++)
             {
-                var symbol = GetRandomElement(Symbols);
+                char symbol = GetRandomElement(Symbols);
 
                 if (!allowRepeatedCharacters && result.Contains(Symbols, StringComparison.InvariantCulture))
                 {

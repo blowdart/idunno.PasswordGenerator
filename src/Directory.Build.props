@@ -1,51 +1,52 @@
 ﻿<Project>
-	<Import Project="..\Directory.Build.props" />
+  <Import Project="..\Directory.Build.props" />
 
-	<ItemGroup>
-		<AdditionalFiles Include="../../version.json" />
-		<None Include="$(PackageIconFullPath)" Pack="true" PackagePath="\"/>
-	</ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="../../version.json" />
+    <AdditionalFiles Include="../../exclusion.dic" />
+    <None Include="$(PackageIconFullPath)" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
-	<PropertyGroup>
-		<PackageProjectUrl>https://github.com/blowdart/idunno.PasswordGenerator</PackageProjectUrl>
-		<!-- The SPDX name for the source license. See https://spdx.org/licenses/. -->
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  <PropertyGroup>
+    <PackageProjectUrl>https://github.com/blowdart/idunno.PasswordGenerator</PackageProjectUrl>
+    <!-- The SPDX name for the source license. See https://spdx.org/licenses/. -->
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
-		<PackageIcon>icon.png</PackageIcon>
-		<PackageIconFullPath>$(MSBuildThisFileDirectory)icon.png</PackageIconFullPath>
-		<NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
-	</PropertyGroup>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)icon.png</PackageIconFullPath>
+    <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
+  </PropertyGroup>
 
-	<PropertyGroup>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisMode>All</AnalysisMode>
-		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-	</PropertyGroup>
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>All</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
 
-	<Choose>
-		<When Condition="'$(Configuration)' != 'CodeQL'">
-			<PropertyGroup>
-				<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-				<DebugSymbols>true</DebugSymbols>
-			</PropertyGroup>
+  <Choose>
+    <When Condition="'$(Configuration)' != 'CodeQL'">
+      <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <DebugSymbols>true</DebugSymbols>
+      </PropertyGroup>
 
-			<ItemGroup>
-				<PackageReference Include="DotNet.ReproducibleBuilds" PrivateAssets="All"/>
-				<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
-			</ItemGroup>
-		</When>
-	</Choose>
+      <ItemGroup>
+        <PackageReference Include="DotNet.ReproducibleBuilds" PrivateAssets="All"/>
+        <PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="All" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
-	<!-- Release configuration
-         Enable sbom generation -->
-	<Choose>
-		<When Condition="'$(Configuration)' == 'Release'">
-			<PropertyGroup>
-				<GenerateSBOM>true</GenerateSBOM>
-			</PropertyGroup>
-			<ItemGroup>
-				<PackageReference Include="Microsoft.Sbom.Targets" PrivateAssets="All" />
-			</ItemGroup>
-		</When>
-	</Choose>
+  <!-- Release configuration
+       Enable sbom generation -->
+  <Choose>
+    <When Condition="'$(Configuration)' == 'Release'">
+      <PropertyGroup>
+        <GenerateSBOM>true</GenerateSBOM>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.Sbom.Targets" PrivateAssets="All" />
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>
