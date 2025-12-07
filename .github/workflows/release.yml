@@ -30,7 +30,7 @@ jobs:
       contents: read
       id-token: write
 
-    name: Build pre-release
+    name: Build Rlease
     runs-on: ubuntu-latest
     steps:
     - name: Harden Runner
