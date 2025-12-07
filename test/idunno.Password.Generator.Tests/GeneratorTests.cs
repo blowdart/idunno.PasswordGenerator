@@ -1,4 +1,4 @@
-// Copyright (c) Barry Dorrans. All rights reserved.
+﻿// Copyright (c) Barry Dorrans. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -88,7 +88,7 @@ namespace idunno.Password.Generator.Tests
 
             void action() => generator.Generate(10, 10, 10);
 
-            var exception =  Assert.Throws<ArgumentException>(action);
+            var exception =  Assert.Throws<ArgumentOutOfRangeException>(action);
             Assert.Equal("length", exception.ParamName);
         }
 
@@ -99,7 +99,7 @@ namespace idunno.Password.Generator.Tests
 
             void action() => generator.Generate(10, 0, 0, true, false, "abcd", "ABCD", "1", "!");
 
-            var exception = Assert.Throws<ArgumentException>(action);
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(action);
             Assert.Equal("length", exception.ParamName);
         }
 
@@ -110,7 +110,7 @@ namespace idunno.Password.Generator.Tests
 
             void action() => generator.Generate(4, 2, 2, true, false, "abc", "ABC", "1", "!@#");
 
-            var exception = Assert.Throws<ArgumentException>(action);
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(action);
             Assert.Equal("numberOfDigits", exception.ParamName);
         }
 
@@ -121,7 +121,7 @@ namespace idunno.Password.Generator.Tests
 
             void action() => generator.Generate(4, 2, 2, true, false, "abc", "ABC", "123", "!");
 
-            var exception = Assert.Throws<ArgumentException>(action);
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(action);
             Assert.Equal("numberOfSymbols", exception.ParamName);
         }
     }
