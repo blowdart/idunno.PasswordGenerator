@@ -123,6 +123,44 @@ jobs:
         --azure-key-vault-url "${{ secrets.AZURE_KEY_VAULT_URL }}" 
         --azure-key-vault-certificate "${{ secrets.AZURE_KEY_VAULT_CERTIFICATE }}"
 
+    - name: Expand signed nupkg for attestation
+      shell: pwsh
+      run: | 
+        # Create the attestation directory, if it doesn't exist, then delete whatever is in it, just in case.
+        New-Item -ItemType Directory -Force -Path ($env:ATTESTATION_INPUT) | Out-Null
+        $attestationItems = Get-ChildItem -Path $env:ATTESTATION_INPUT -Force -ErrorAction SilentlyContinue
+        if ($attestationItems)
+        {
+          Remove-Item -Path $attestationItems.FullName -Recurse -Force
+        }
+
+        # Build the bits to attest
+        Get-ChildItem -Path $env:OUTPUT_DIRECTORY -Filter *.nupkg -Force | ForEach-Object { 
+          Copy-Item $_.FullName $($env:ATTESTATION_INPUT)
+          Expand-Archive $_.FullName "$($env:ATTESTATION_INPUT)/$($_.Basename)" -Force
+
+          # Place SBOM from the nupkg alongside the nupkg for attestation
+          Copy-Item "$($env:ATTESTATION_INPUT)/$($_.Basename)/_manifest/spdx_2.2/manifest.spdx.json" -Destination "$($env:ATTESTATION_INPUT)/$($_.Basename).spdx.json"
+          Copy-Item "$($env:ATTESTATION_INPUT)/$($_.Basename)/_manifest/spdx_2.2/manifest.spdx.json.sha256" -Destination "$($env:ATTESTATION_INPUT)/$($_.Basename).spdx.json.sha256"
+
+          # Remove the extraneous files from the nupkg extraction
+          Remove-Item "$($env:ATTESTATION_INPUT)/$($_.Basename)/_rels" -Recurse -Force
+          Remove-Item "$($env:ATTESTATION_INPUT)/$($_.Basename)/package" -Recurse -Force
+          # Need to special case [Content_Types].xml because of those pesky [] characters
+          $contentTypes=Join-Path "$($env:ATTESTATION_INPUT)/$($_.Basename)" -ChildPath "[Content_Types].xml"
+          Remove-Item -LiteralPath $contentTypes -Force
+        }
+
+    - name: 'List attestation artifacts'
+      shell: pwsh
+      run: >
+        Get-ChildItem -Path ${env:ATTESTATION_INPUT} -Recurse -Force
+
+    - name: 'Attest artifacts'
+      uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+      with:
+        subject-path: ${{env.ATTESTATION_INPUT}}
+
     - name: Upload signed nupkgs to artifacts
       uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       id: upload
@@ -130,12 +168,6 @@ jobs:
         name: signed-artifacts
         path: ${{env.OUTPUT_DIRECTORY}}/*
         retention-days: 7
-
-    - name: Attest signed artifacts
-      uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
-      with:
-        subject-name: signed-artifacts
-        subject-digest: sha256:${{ steps.upload.outputs.artifact-digest }}
 
   publish:
     name: Publish
@@ -163,7 +195,7 @@ jobs:
         path : ${{ env.OUTPUT_DIRECTORY }}
 
     - name: Authenticate to nuget
-      uses: NuGet/login@d22cc5f58ff5b88bf9bd452535b4335137e24544 # v1.0.0
+      uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
       id: nugetlogin
       with:
         user: ${{secrets.NUGET_USERNAME}}
@@ -176,3 +208,26 @@ jobs:
         foreach($file in (Get-ChildItem "${env:OUTPUT_DIRECTORY}" -Recurse -Filter *.nupkg)) {
           dotnet nuget push $file --api-key "${{ steps.nugetlogin.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
         }
+
+    - name: Setup MyGet and GitHub Packages as NuGet Sources
+      shell: pwsh
+      run: |
+        dotnet new nugetconfig
+        dotnet nuget remove source nuget
+        dotnet nuget add source https://nuget.pkg.github.com/blowdart/index.json --name github
+        dotnet nuget add source https://www.myget.org/F/blowdart/api/v3/index.json --name myget
+
+    - name: Publish NuGet packages to GitHub packages
+      shell: pwsh
+      run: >
+        foreach($file in (Get-ChildItem "${env:OUTPUT_DIRECTORY}" -Recurse -Filter *.nupkg)) {
+          dotnet nuget push $file --api-key "${{ secrets.PUBLISH_PACKAGES_PAT }}" --source "github" --skip-duplicate
+        }
+
+    - name: Publish NuGet packages to myget
+      shell: pwsh
+      run: >
+        foreach($file in (Get-ChildItem "${env:OUTPUT_DIRECTORY}" -Recurse -Filter *.nupkg)) {
+          dotnet nuget push $file --api-key "${{ secrets.MYGET_APIKEY }}" --source "https://www.myget.org/F/blowdart/api/v2/package" --skip-duplicate
+        }
+
