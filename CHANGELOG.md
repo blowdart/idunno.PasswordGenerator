@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## [1.1.0](https://github.com/blowdart/idunno.PasswordGenerator/releases/tag/v1.1.0) - 2026-07-20
+
+### Fixed
+
+- Bug where requesting no repeated characters in a password could result in repeated characters.
+
 ## [1.0.1](https://github.com/blowdart/idunno.PasswordGenerator/releases/tag/v1.0.1) - 2025-12-07
 
 ### Added
