@@ -1,0 +1,3 @@
+#nullable enable
+idunno.Password.PasswordGenerator
+static idunno.Password.PasswordGenerator.Generate(int length, int numberOfDigits, int numberOfSymbols, bool noUpperCase = false, bool allowRepeatedCharacters = false, string! lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz", string! upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", string! digits = "0123456789", string! symbols = "~!@#$%^&*()_+`-={}|[]\\:\"<>?,./") -> string!

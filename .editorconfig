@@ -1,4 +1,4 @@
-﻿# editorconfig.org
+# editorconfig.org
 
 # top-most EditorConfig file
 root = true
@@ -11,6 +11,7 @@ trim_trailing_whitespace = true
 spelling_exclusion_path = .\exclusion.dic
 spelling_checkable_types = strings,identifiers,comments
 spelling_error_severity = information
+charset=utf-8
 
 # Generated code
 [*{_AssemblyInfo.cs,.notsupported.cs,AsmOffsets.cs}]
@@ -18,6 +19,15 @@ generated_code = true
 
 # C# files
 [*.cs]
+
+# General file settings
+insert_final_newline = false
+end_of_line = crlf
+
+# Organize usings
+dotnet_separate_import_directive_groups = true
+dotnet_sort_system_directives_first = true
+
 # New line preferences
 csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
@@ -80,6 +90,7 @@ dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
 # Code style defaults
 csharp_using_directive_placement = outside_namespace:suggestion
+csharp_style_namespace_declarations = file_scoped:warning
 dotnet_sort_system_directives_first = true
 csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true:none
@@ -152,7 +163,7 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 # License header
-file_header_template = Copyright (c) Barry Dorrans. All rights reserved.\nLicensed under the Apache License.
+file_header_template = Copyright (c) Barry Dorrans. All rights reserved.\nLicensed under the MIT License.
 
 # C++ Files
 

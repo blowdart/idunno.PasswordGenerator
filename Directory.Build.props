@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 	<PropertyGroup>
 		<Product>idunno.org Password Generator</Product>
 		<MaintainerEmail>github.com@idunno.org</MaintainerEmail>
@@ -14,11 +14,16 @@
 
 		<Company>idunno.org</Company>
 		<Authors>blowdart</Authors>
-		<Copyright>Copyright (c) 2022 Barry Dorrans</Copyright>
+		<Copyright>Copyright (c) 2022-2026 Barry Dorrans</Copyright>
 	</PropertyGroup>
-	<PropertyGroup>
+
+  <PropertyGroup>
 		<Nullable>enable</Nullable>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 	</PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>14</LangVersion>
+  </PropertyGroup>  
 </Project>

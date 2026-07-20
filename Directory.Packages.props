@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
@@ -9,12 +9,16 @@
 
 	<!-- Test projects -->
 	<ItemGroup>
+    <PackageVersion Include="CommentSense" Version="1.0.1" />   
+		<PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />   
+		<PackageVersion Include="JunitXml.TestLogger" Version="7.1.0" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
-		<PackageVersion Include="Microsoft.CodeCoverage" Version="18.8.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
+    <PackageVersion Include="Microsoft.CodeCoverage" Version="18.8.1" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.29.0.143774" />
 		<PackageVersion Include="xunit.v3" Version="3.2.2" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-		<PackageVersion Include="coverlet.collector" Version="10.0.1" />
-		<PackageVersion Include="JunitXml.TestLogger" Version="7.1.0" />
 	</ItemGroup>
 
 	<!-- Package projects -->

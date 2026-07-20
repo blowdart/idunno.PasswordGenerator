@@ -1,10 +1,18 @@
-﻿# Changelog
+# Changelog
 
 ## [1.1.0](https://github.com/blowdart/idunno.PasswordGenerator/releases/tag/v1.1.0) - 2026-07-20
 
 ### Fixed
 
 - Bug where requesting no repeated characters in a password could result in repeated characters.
+
+### Breaking changes
+
+- Made the class and method static, so you no longer need to instantiate the class to generate a password. This will require updates to existing code that uses the library.
+
+### Changed
+
+- Optimized generation algorithm to reduce memory allocations and improve performance.
 
 ## [1.0.1](https://github.com/blowdart/idunno.PasswordGenerator/releases/tag/v1.0.1) - 2025-12-07
 
