@@ -94,7 +94,7 @@ namespace idunno.Password
             {
                 char symbol = GetRandomElement(Symbols);
 
-                if (!allowRepeatedCharacters && result.Contains(Symbols, StringComparison.InvariantCulture))
+                if (!allowRepeatedCharacters && result.Contains(symbol, StringComparison.InvariantCulture))
                 {
                     i--;
                 }
