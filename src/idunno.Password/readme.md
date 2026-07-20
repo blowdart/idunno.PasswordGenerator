@@ -1,4 +1,4 @@
-﻿# C# Password Generator
+# C# Password Generator
 
 This library is a password generator which implements generation of random passwords 
 with provided requirements as described by  [AgileBits 1Password](https://discussions.agilebits.com/discussion/23842/how-random-are-the-generated-passwords)

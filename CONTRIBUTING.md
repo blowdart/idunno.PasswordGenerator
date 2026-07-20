@@ -1,4 +1,4 @@
-﻿# Contributing
+# Contributing
 
 🎉 Firstly a huge thank you for taking the time to contribute.🎉
 
