@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure
@@ -14,6 +14,8 @@ namespace idunno.Password;
 /// </summary>
 public static class PasswordGenerator
 {
+    private const int StackAllocationThreshold = 256;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PasswordGenerator"/> class.
     /// </summary>
@@ -36,7 +38,6 @@ public static class PasswordGenerator
     /// <param name="symbols">A string containing characters used as symbols in the password.</param>
     /// <returns>A random password string with the requirements specified by the parameters</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the restrictive arguments mean generation cannot be fulfilled.</exception>
-    [SuppressMessage("CodeSmell", "S127: \"for\" loop stop conditions should be invariant", Justification = "The loop stop conditions are intentionally variable based on input parameters.")]
     public static string Generate(
         int length,
         int numberOfDigits,
@@ -112,73 +113,84 @@ public static class PasswordGenerator
             throw new ArgumentOutOfRangeException(nameof(numberOfSymbols), "Number of symbols requested exceeds available symbols and repeats are not allowed");
         }
 
-        string result = string.Empty;
+        char[]? rented = length > StackAllocationThreshold ? new char[length] : null;
+        Span<char> buffer = rented ?? stackalloc char[length];
 
-        for (int i = 0; i < charactersInPassword; i++)
-        {
-            char character = GetRandomElement(letters);
+        // When repeats are disallowed a single set tracks every character already placed so that
+        // the whole password stays free of duplicates across all three character categories.
+        HashSet<char>? used = allowRepeatedCharacters ? null : new HashSet<char>(length);
 
-            if (!allowRepeatedCharacters && result.Contains(character, StringComparison.InvariantCulture))
-            {
-                i--;
-            }
-            else
-            {
-                result = InsertAtRandomPosition(result, character);
-            }
-        }
+        int position = 0;
+        AppendRandomCharacters(letters, charactersInPassword, buffer, ref position, used, nameof(length));
+        AppendRandomCharacters(digits, numberOfDigits, buffer, ref position, used, nameof(numberOfDigits));
+        AppendRandomCharacters(symbols, numberOfSymbols, buffer, ref position, used, nameof(numberOfSymbols));
 
-        for (int i = 0; i < numberOfDigits; i++)
-        {
-            char digit = GetRandomElement(digits);
+        Shuffle(buffer[..position]);
 
-            if (!allowRepeatedCharacters && result.Contains(digit, StringComparison.InvariantCulture))
-            {
-                i--;
-            }
-            else
-            {
-                result = InsertAtRandomPosition(result, digit);
-            }
-        }
-
-        for (int i = 0; i < numberOfSymbols; i++)
-        {
-            char symbol = GetRandomElement(symbols);
-
-            if (!allowRepeatedCharacters && result.Contains(symbol, StringComparison.InvariantCulture))
-            {
-                i--;
-            }
-            else
-            {
-                result = InsertAtRandomPosition(result, symbol);
-            }
-        }
-
-        return result;
+        return new string(buffer[..position]);
     }
 
     /// <summary>
-    /// Inserts <paramref name="characterToInsert"/> into <paramref name="input"/> at a random position.
+    /// Appends <paramref name="quantity"/> randomly selected characters from <paramref name="pool"/> to
+    /// <paramref name="buffer"/>. When <paramref name="used"/> is supplied the selected characters are
+    /// distinct, are not already present in <paramref name="used"/>, and are added to it.
     /// </summary>
-    /// <param name="input">The string <paramref name="characterToInsert"/> should be inserted into.</param>
-    /// <param name="characterToInsert">The character to insert into <paramref name="input"/>.</param>
-    /// <returns>A string containing <paramref name="characterToInsert"/> into <paramref name="input"/> at a random position.</returns>
-    private static string InsertAtRandomPosition(string input, char characterToInsert)
+    private static void AppendRandomCharacters(string pool, int quantity, Span<char> buffer, ref int position, HashSet<char>? used, string parameterName)
     {
-        int position = input.Length == 0 ? 0 : RandomNumberGenerator.GetInt32(0, input.Length);
-        return input.Insert(position, characterToInsert.ToString());
+        if (quantity <= 0)
+        {
+            return;
+        }
+
+        if (used is null)
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                buffer[position++] = pool[RandomNumberGenerator.GetInt32(0, pool.Length)];
+            }
+
+            return;
+        }
+
+        // Collect the distinct characters that have not already been placed by another category, then
+        // select the required number of them without replacement. Drawing without replacement removes
+        // the draw and retry loop the previous implementation relied on.
+        Span<char> candidates = pool.Length <= StackAllocationThreshold ? stackalloc char[pool.Length] : new char[pool.Length];
+        int candidateCount = 0;
+
+        foreach (char candidate in pool)
+        {
+            if (!used.Contains(candidate) && candidates[..candidateCount].IndexOf(candidate) < 0)
+            {
+                candidates[candidateCount++] = candidate;
+            }
+        }
+
+        if (candidateCount < quantity)
+        {
+            throw new ArgumentOutOfRangeException(parameterName, "Number of characters requested exceeds the available distinct characters and repeats are not allowed.");
+        }
+
+        for (int i = 0; i < quantity; i++)
+        {
+            int selectedIndex = i + RandomNumberGenerator.GetInt32(0, candidateCount - i);
+            char selected = candidates[selectedIndex];
+            candidates[selectedIndex] = candidates[i];
+
+            buffer[position++] = selected;
+            used.Add(selected);
+        }
     }
 
     /// <summary>
-    /// Gets a random character from <paramref name="input"/>.
+    /// Randomly permutes <paramref name="characters"/> in place using a cryptographically secure shuffle.
     /// </summary>
-    /// <param name="input">The string to select a random character from.</param>
-    /// <returns>A random character from <paramref name="input"/>.</returns>
-    private static char GetRandomElement(string input)
+    private static void Shuffle(Span<char> characters)
     {
-        int position = RandomNumberGenerator.GetInt32(0, input.Length);
-        return input[position];
+        for (int i = characters.Length - 1; i > 0; i--)
+        {
+            int swapIndex = RandomNumberGenerator.GetInt32(0, i + 1);
+            (characters[i], characters[swapIndex]) = (characters[swapIndex], characters[i]);
+        }
     }
 }
