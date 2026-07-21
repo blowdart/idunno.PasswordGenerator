@@ -176,7 +176,7 @@ jobs:
     needs: sign
     runs-on: ubuntu-latest
     if:  ${{ inputs.perform_publish }}
-    environment: publish
+    environment: prerelease
     permissions:
       contents: read
       packages: write
