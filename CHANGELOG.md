@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.0](https://github.com/blowdart/idunno.PasswordGenerator/releases/tag/v1.1.0) - 2026-07-20
+## [2.0.0](https://github.com/blowdart/idunno.PasswordGenerator/releases/tag/v2.0.0) - 2026-07-26
 
 ### Fixed
 
