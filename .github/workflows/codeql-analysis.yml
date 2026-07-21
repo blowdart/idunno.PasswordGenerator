@@ -12,14 +12,23 @@
 name: "CodeQL"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+      -  version/*
+    paths-ignore:
+      - '.github/**'
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ main ]
+    branches:
+      - main
+      -  version/*
   schedule:
     - cron: '25 4 * * 2'
+
+permissions:
+  contents: read
 
 jobs:
   analyze:

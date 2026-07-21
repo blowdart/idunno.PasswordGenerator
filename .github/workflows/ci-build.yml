@@ -23,6 +23,7 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
+    environment: cibuild
     permissions:
       contents: read
       issues: read
@@ -79,4 +80,29 @@ jobs:
       with:
         name: test-results
         path: "test/**/TestResults.xml"
+        retention-days: 5
+
+    - name: 'Generate Full Code Coverage Reports'
+      uses: danielpalme/ReportGenerator-GitHub-Action@049f7ec958c672fd31d5cc1cb01622dc8d2e23ab # 5.5.10
+      with:
+        reports: "test/**/coverage.cobertura.xml"
+        targetdir: "${{ env.COVERAGE_REPORT }}"
+        reporttypes: "Cobertura,MarkdownSummaryGithub" 
+        verbosity: "Info" 
+        title: "Code Coverage" 
+        tag: "${{ github.run_number }}_${{ github.run_id }}"
+        toolpath: "reportgeneratortool"
+        license: ${{ secrets.REPORT_GENERATOR_LICENSE }}
+
+    - name: Append coverage report to build summary
+      shell: bash
+      run: cat ${COVERAGE_REPORT}/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload Code Coverage Results
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: coverage-results
+        path: | 
+          ${{ env.COVERAGE_REPORT }}
+          test/**/coverage.cobertura.xml
         retention-days: 5
