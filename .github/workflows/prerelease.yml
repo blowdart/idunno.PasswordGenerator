@@ -137,7 +137,7 @@ jobs:
         }
 
         # Build the bits to attest
-        Get-ChildItem -Path $env:OUTPUT_DIRECTORY -Filter *.nupkg -Force | ForEach-Object { 
+        Get-ChildItem -Path $env:BUILD_OUTPUT -Filter *.nupkg -Force | ForEach-Object { 
           Copy-Item $_.FullName $($env:ATTESTATION_INPUT)
           Expand-Archive $_.FullName "$($env:ATTESTATION_INPUT)/$($_.Basename)" -Force
 
