@@ -81,7 +81,6 @@ jobs:
     name: Sign
     needs: build
     runs-on: windows-latest
-    if:  ${{ inputs.perform_sign }} 
     environment: release
     permissions:
       attestations: write
@@ -167,7 +166,6 @@ jobs:
     name: Publish
     needs: sign
     runs-on: ubuntu-latest
-    if:  ${{ inputs.perform_publish }}
     environment: release
     permissions:
       contents: read
