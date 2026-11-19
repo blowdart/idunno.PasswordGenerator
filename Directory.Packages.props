@@ -14,7 +14,7 @@
     <PackageVersion Include="Microsoft.Sbom.Targets" Version="4.1.5" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.94" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.36.0.15337" />
-    <PackageVersion Include="xunit.v3" Version="4.0.2" />
+    <PackageVersion Include="xunit.v3" Version="4.0.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
   </ItemGroup>
 </Project>
